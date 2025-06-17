@@ -36,5 +36,8 @@ jobs:
       - name: Run OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.7.0
         with:
-          target: 'https://juice-shop.herokuapp.com/'
-          docker_name: owasp/zap2docker-stable
+	  target: https://juice-shop.herokuapp.com/
+    	  token: ${{ secrets.GITHUB_TOKEN }}
+          issue_title: ZAP Scan Baseline Report
+          fail_action: false
+          allow_issue_writing: true
