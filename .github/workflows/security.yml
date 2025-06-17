@@ -8,7 +8,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Horusec
-        run: curl -fsSL https://horusec.io/bin/install.sh | bash
+        run: |
+          curl -Ls https://github.com/ZupIT/horusec/releases/latest/download/horusec_linux_amd64 -o horusec
+          chmod +x horusec
+          sudo mv horusec /usr/local/bin/horusec
       - name: Run Horusec
         run: horusec start -p . --output-format=json -o horusec-report
 
