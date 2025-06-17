@@ -21,7 +21,7 @@ jobs:
         run: horusec start -p . --output-format=json --json-output-file=horusec-report.json --disable-docker
 
       - name: Upload Horusec report artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: horusec-report
           path: horusec-report.json
