@@ -13,7 +13,7 @@ jobs:
           chmod +x horusec
           sudo mv horusec /usr/local/bin/horusec
       - name: Run Horusec
-        run: horusec start -p . --output-format=json -o horusec-report
+        run: horusec start -p . --output-format=json --json-output-file=horusec-report.json
 
   zap_scan:
     runs-on: ubuntu-latest
