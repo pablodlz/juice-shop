@@ -18,14 +18,6 @@ pipeline {
             }
         }
 
-        stage('Instalar dependências') {
-            steps {
-                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat 'npm install'
-                }
-            }
-        }
-
         stage('SAST com Snyk Code') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
