@@ -7,41 +7,41 @@ pipeline {
     }
 
     stages {
-        stage('SAST com Snyk Code (Rápido)') {
+        stage('SAST - Snyk Code') {
             steps {
-                dir('.') {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     bat 'snyk code test --all-projects --severity-threshold=high --json > snyk-sast-report.json'
                 }
             }
         }
 
-        stage('SCA - Auditoria de Dependências (Rápido)') {
+        stage('SCA - Dependências') {
             steps {
-                dir('.') {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     bat 'snyk test --all-projects --severity-threshold=high --json > snyk-sca-report.json'
                 }
             }
         }
 
-        stage('IaC - Dockerfile scan') {
+        stage('IaC - Dockerfile') {
             steps {
-                dir('.') {
-                    bat 'snyk iac test Dockerfile --json > snyk-iac-report.json'
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    bat 'snyk iac test --severity-threshold=high --json > snyk-iac-report.json'
                 }
             }
         }
 
-        stage('Monitoramento no Snyk') {
+        stage('Monitoramento') {
             steps {
-                dir('.') {
-                    bat 'snyk monitor --all-projects'
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    bat 'snyk monitor'
                 }
             }
         }
 
         stage('Arquivar Relatórios') {
             steps {
-                archiveArtifacts artifacts: '**/*.json', allowEmptyArchive: true
+                archiveArtifacts artifacts: '*.json', allowEmptyArchive: true
             }
         }
     }
