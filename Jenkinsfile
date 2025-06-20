@@ -14,7 +14,6 @@ pipeline {
         stage('Preparar código') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat 'git pull'
                 }
             }
         }
