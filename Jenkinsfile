@@ -19,12 +19,6 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
-            steps {
-                bat 'npm install'
-            }
-        }
-
         stage('SAST com Snyk Code') {
             steps {
                 bat "\"${env.SNYK_PATH}\" code test --json > snyk-sast-report.json"
