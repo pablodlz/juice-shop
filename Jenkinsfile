@@ -13,6 +13,12 @@ pipeline {
             }
         }
 
+        stage('Install dependencies') {
+            steps {
+                bat 'npm install'
+            }
+        }
+
         stage('SAST com Snyk Code') {
             steps {
                 script {
