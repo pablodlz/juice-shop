@@ -12,39 +12,37 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/pablodlz/juice-shop.git'
+                git branch: 'master', url: 'https://github.com/pablodlz/juice-shop.git'
             }
         }
-        
+
+        stage('Install dependencies') {
+            steps {
+                bat 'npm install'
+            }
+        }
+
         stage('SAST com Snyk Code') {
             steps {
-                sh 'snyk code test'
+                bat 'snyk code test --json > snyk-sast-report.json'
             }
         }
 
         stage('SCA - Auditoria de Dependências') {
             steps {
-                sh 'snyk test'
+                bat 'snyk test --json > snyk-sca-report.json'
             }
         }
 
         stage('IaC - Dockerfile scan') {
             steps {
-                sh 'snyk iac test'
+                bat 'snyk iac test --json > snyk-iac-report.json'
             }
         }
 
         stage('Monitoramento no Snyk') {
             steps {
-                sh 'snyk monitor'
-            }
-        }
-
-        stage('Gerar Relatórios Locais') {
-            steps {
-                sh 'snyk test --json > snyk-sca-report.json'
-                sh 'snyk code test --json > snyk-sast-report.json'
-                sh 'snyk iac test --json > snyk-iac-report.json'
+                bat 'snyk monitor'
             }
         }
     }
