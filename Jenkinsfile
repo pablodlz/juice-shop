@@ -7,6 +7,18 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Instalar Dependências') {
+            steps {
+                bat 'npm install'
+            }
+        }
+
         stage('SAST - Snyk Code') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -41,7 +53,7 @@ pipeline {
 
         stage('Arquivar Relatórios') {
             steps {
-                archiveArtifacts artifacts: '*.json', allowEmptyArchive: true
+                archiveArtifacts artifacts: '*.json', fingerprint: true
             }
         }
     }
