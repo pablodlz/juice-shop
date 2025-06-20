@@ -3,44 +3,41 @@ pipeline {
 
     environment {
         SNYK_TOKEN = credentials('snyk-int3') // ID da credencial no Jenkins
-        PATH = "C:\\Users\\pablo\\AppData\\Roaming\\npm;${env.PATH}" // caminho onde o snyk está instalado
+        PATH = "C:\\Users\\pablo\\AppData\\Roaming\\npm;${env.PATH}" // Onde o Snyk foi instalado via npm
     }
 
     options {
-        skipDefaultCheckout()
+        timestamps()
     }
 
     stages {
-        stage('Clean Workspace') {
+        stage('Preparar código') {
             steps {
-                cleanWs()
+                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
+                    bat 'git pull'
+                }
             }
         }
 
-        stage('Checkout') {
+        stage('Instalar dependências') {
             steps {
-                git credentialsId: 'github-login', url: 'https://github.com/pablodlz/juice-shop.git'
-            }
-        }
-
-        stage('Install dependencies') {
-            steps {
-                bat 'npm config set registry https://registry.npmmirror.com'
-                bat 'npm install || exit 0' // evita que o pipeline quebre por erro de rede temporário
+                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
+                    bat 'npm install'
+                }
             }
         }
 
         stage('SAST com Snyk Code') {
             steps {
-                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    bat '"snyk code test --json > snyk-sast-report.json"'
+                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
+                    bat 'snyk code test --json > snyk-sast-report.json'
                 }
             }
         }
 
         stage('SCA - Auditoria de Dependências') {
             steps {
-                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
                     bat 'snyk test --all-projects --json > snyk-sca-report.json'
                 }
             }
@@ -48,7 +45,7 @@ pipeline {
 
         stage('IaC - Dockerfile scan') {
             steps {
-                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
                     bat 'snyk iac test Dockerfile --json > snyk-iac-report.json'
                 }
             }
@@ -56,7 +53,7 @@ pipeline {
 
         stage('Monitoramento no Snyk') {
             steps {
-                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
                     bat 'snyk monitor --all-projects'
                 }
             }
@@ -64,7 +61,7 @@ pipeline {
 
         stage('Arquivar Relatórios') {
             steps {
-                archiveArtifacts artifacts: '*.json', onlyIfSuccessful: false
+                archiveArtifacts artifacts: '**/*.json', allowEmptyArchive: true
             }
         }
     }
@@ -74,7 +71,7 @@ pipeline {
             echo 'Pipeline finalizado.'
         }
         failure {
-            echo 'Erro detectado. Verifique os logs acima.'
+            echo 'Erro detectado. Verifique os logs.'
         }
     }
 }
