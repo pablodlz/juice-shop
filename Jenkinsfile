@@ -5,8 +5,9 @@ pipeline {
         SNYK_TOKEN = credentials('snyk-int3')
         PATH = "C:\\Users\\pablo\\AppData\\Roaming\\npm;${env.PATH}"
     }
-/*
+
     stages {
+/*
         stage('SAST com Snyk Code (Rápido)') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
