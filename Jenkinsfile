@@ -2,34 +2,27 @@ pipeline {
     agent any
 
     environment {
-        SNYK_TOKEN = credentials('snyk-int3') // ID da credencial no Jenkins
-        PATH = "C:\\Users\\pablo\\AppData\\Roaming\\npm;${env.PATH}" // Onde o Snyk foi instalado via npm
-    }
-
-    options {
-        timestamps()
+        SNYK_TOKEN = credentials('snyk-int3')
+        PATH = "C:\\Users\\pablo\\AppData\\Roaming\\npm;${env.PATH}"
     }
 
     stages {
-        stage('Preparar código') {
+        stage('SAST com Snyk Code (Rápido)') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
+                    bat 'snyk code test --path=./routes --severity-threshold=high --json > snyk-sast-report.json'
+                    bat 'snyk code test --path=./routes --severity-threshold=high'
                 }
             }
         }
 
-        stage('SAST com Snyk Code') {
-            steps {
-                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat 'snyk code test --json > snyk-sast-report.json'
-                }
-            }
-        }
+        // Para ativar as etapas abaixo, tire o comentário (remova /* e */)
 
-        stage('SCA - Auditoria de Dependências') {
+        /*
+        stage('SCA - Auditoria de Dependências (Rápido)') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat 'snyk test --all-projects --json > snyk-sca-report.json'
+                    bat 'snyk test --all-projects --severity-threshold=high --json > snyk-sca-report.json'
                 }
             }
         }
@@ -41,7 +34,7 @@ pipeline {
                 }
             }
         }
-
+*/
         stage('Monitoramento no Snyk') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
