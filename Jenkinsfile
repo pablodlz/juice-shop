@@ -10,6 +10,7 @@ pipeline {
         stage('SAST com Snyk Code (Rápido)') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
+                    bat 'powershell -Command "Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass"'
                     bat 'snyk code test --path=./route2 --severity-threshold=high --json > snyk-sast-report.json'
                     bat 'snyk code test --path=./route2 --severity-threshold=high'
                 }
