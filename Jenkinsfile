@@ -7,36 +7,43 @@ pipeline {
     }
 
     stages {
-/*
         stage('SAST com Snyk Code (Rápido)') {
             steps {
-                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat 'snyk code test --all-projects --severity-threshold=high --json > snyk-sast-report.json'
+                dir('"C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop"') {
+                    bat 'echo Iniciando Snyk SAST...'
+                    bat 'cmd /c snyk --version'
+                    bat 'cmd /c snyk code test --all-projects --severity-threshold=high --json > snyk-sast-report.json'
+                    bat 'echo Snyk SAST finalizado.'
                 }
             }
         }
 
-*/
-
         stage('SCA - Auditoria de Dependências (Rápido)') {
             steps {
-                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat 'snyk test --all-projects --severity-threshold=high --json > snyk-sca-report.json'
+                dir('"C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop"') {
+                    bat 'echo Iniciando Snyk SCA...'
+                    bat 'cmd /c snyk test --all-projects --severity-threshold=high --json > snyk-sca-report.json'
+                    bat 'echo Snyk SCA finalizado.'
                 }
             }
         }
 
         stage('IaC - Dockerfile scan') {
             steps {
-                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat 'snyk iac test Dockerfile --json > snyk-iac-report.json'
+                dir('"C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop"') {
+                    bat 'echo Iniciando Snyk IaC...'
+                    bat 'cmd /c snyk iac test Dockerfile --json > snyk-iac-report.json'
+                    bat 'echo Snyk IaC finalizado.'
                 }
             }
         }
+
         stage('Monitoramento no Snyk') {
             steps {
-                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat 'snyk monitor --all-projects'
+                dir('"C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop"') {
+                    bat 'echo Iniciando monitoramento Snyk...'
+                    bat 'cmd /c snyk monitor --all-projects'
+                    bat 'echo Monitoramento Snyk finalizado.'
                 }
             }
         }
