@@ -20,7 +20,7 @@ pipeline {
 
         stage('SCA - Auditoria de Dependências (Rápido)') {
             steps {
-                dir('"C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop"') {
+                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
                     bat 'echo Iniciando Snyk SCA...'
                     bat 'cmd /c snyk test --all-projects --severity-threshold=high --json > snyk-sca-report.json'
                     bat 'echo Snyk SCA finalizado.'
@@ -30,7 +30,7 @@ pipeline {
 
         stage('IaC - Dockerfile scan') {
             steps {
-                dir('"C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop"') {
+                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
                     bat 'echo Iniciando Snyk IaC...'
                     bat 'cmd /c snyk iac test Dockerfile --json > snyk-iac-report.json'
                     bat 'echo Snyk IaC finalizado.'
@@ -40,7 +40,7 @@ pipeline {
 
         stage('Monitoramento no Snyk') {
             steps {
-                dir('"C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop"') {
+                dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
                     bat 'echo Iniciando monitoramento Snyk...'
                     bat 'cmd /c snyk monitor --all-projects'
                     bat 'echo Monitoramento Snyk finalizado.'
