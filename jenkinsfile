@@ -15,13 +15,7 @@ pipeline {
                 git 'https://github.com/pablodlz/juice-shop.git'
             }
         }
-
-        stage('Install dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
+        
         stage('SAST com Snyk Code') {
             steps {
                 sh 'snyk code test'
