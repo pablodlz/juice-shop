@@ -10,8 +10,8 @@ pipeline {
         stage('SAST com Snyk Code (Rápido)') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat 'snyk code test --path=./routes --severity-threshold=high --json > snyk-sast-report.json'
-                    bat 'snyk code test --path=./routes --severity-threshold=high'
+                    bat 'snyk code test --path=./route2 --severity-threshold=high --json > snyk-sast-report.json'
+                    bat 'snyk code test --path=./route2 --severity-threshold=high'
                 }
             }
         }
