@@ -5,22 +5,18 @@ pipeline {
         SNYK_TOKEN = credentials('snyk-int3')
         PATH = "C:\\Users\\pablo\\AppData\\Roaming\\npm;${env.PATH}"
     }
-
+/*
     stages {
         stage('SAST com Snyk Code (Rápido)') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
-                    bat '''
-                        powershell -Command "Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass; snyk code test --path=./routes --severity-threshold=high --json > snyk-sast-report.json"
-                    '''
-                    bat 'snyk code test --path=./routes --severity-threshold=high'
+                    bat 'snyk code test --all-projects --severity-threshold=high --json > snyk-sast-report.json'
                 }
             }
         }
 
-        // Para ativar as etapas abaixo, tire o comentário (remova /* e */)
+*/
 
-        /*
         stage('SCA - Auditoria de Dependências (Rápido)') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
@@ -36,7 +32,6 @@ pipeline {
                 }
             }
         }
-*/
         stage('Monitoramento no Snyk') {
             steps {
                 dir('C:/Users/pablo/OneDrive/Área de Trabalho/AppSec/Desafio/juice-shop') {
