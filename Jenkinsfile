@@ -2,66 +2,79 @@ pipeline {
     agent any
 
     environment {
-        SNYK_PATH = 'C:\\Users\\pablo\\AppData\\Roaming\\npm\\snyk.cmd'
-        SNYK_TOKEN = credentials('snyk-int3')
+        SNYK_TOKEN = credentials('snyk-int3') // ID da credencial no Jenkins
+        PATH = "C:\\Users\\pablo\\AppData\\Roaming\\npm;${env.PATH}" // caminho onde o snyk está instalado
+    }
+
+    options {
+        skipDefaultCheckout()
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
         stage('Checkout') {
             steps {
-                git 'https://github.com/pablodlz/juice-shop.git'
+                git credentialsId: 'github-login', url: 'https://github.com/pablodlz/juice-shop.git'
             }
         }
 
         stage('Install dependencies') {
             steps {
-                bat 'npm install'
+                bat 'npm config set registry https://registry.npmmirror.com'
+                bat 'npm install || exit 0' // evita que o pipeline quebre por erro de rede temporário
             }
         }
 
         stage('SAST com Snyk Code') {
             steps {
-                script {
-                    def status = bat(script: "\"${env.SNYK_PATH}\" code test --json > snyk-sast-report.json", returnStatus: true)
-                    if (status != 0) {
-                        echo "Snyk Code test encontrou vulnerabilidades."
-                    }
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    bat '"snyk code test --json > snyk-sast-report.json"'
                 }
             }
         }
 
         stage('SCA - Auditoria de Dependências') {
             steps {
-                script {
-                    def status = bat(script: "\"${env.SNYK_PATH}\" test --json > snyk-sca-report.json", returnStatus: true)
-                    if (status != 0) {
-                        echo "Snyk Test encontrou vulnerabilidades."
-                    }
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    bat 'snyk test --all-projects --json > snyk-sca-report.json'
                 }
             }
         }
 
         stage('IaC - Dockerfile scan') {
             steps {
-                script {
-                    def status = bat(script: "\"${env.SNYK_PATH}\" iac test --json > snyk-iac-report.json", returnStatus: true)
-                    if (status != 0) {
-                        echo "Snyk IaC encontrou vulnerabilidades."
-                    }
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    bat 'snyk iac test Dockerfile --json > snyk-iac-report.json'
                 }
             }
         }
 
         stage('Monitoramento no Snyk') {
             steps {
-                bat "\"${env.SNYK_PATH}\" monitor"
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    bat 'snyk monitor --all-projects'
+                }
             }
         }
 
         stage('Arquivar Relatórios') {
             steps {
-                archiveArtifacts artifacts: '*.json', allowEmptyArchive: true
+                archiveArtifacts artifacts: '*.json', onlyIfSuccessful: false
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finalizado.'
+        }
+        failure {
+            echo 'Erro detectado. Verifique os logs acima.'
         }
     }
 }
